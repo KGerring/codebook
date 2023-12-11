@@ -6,7 +6,7 @@ def strip_js(filename, bad_lines):
     good_lines = []
     with open(filename, "r") as f:
         for line in f:
-            is_bad = sum([bad_line in line for bad_line in bad_lines])
+            is_bad = sum(bad_line in line for bad_line in bad_lines)
             if not is_bad:
                 good_lines.append(line)
 
