@@ -123,18 +123,17 @@ def clean_input(md):
             if "```" in line:
                 in_citation = False
             else:
-                lines.append("> " + line)
+                lines.append(f"> {line}")
+        elif "{epigraph}" in line:
+            in_citation = True
+        elif "{dropdown}" in line:
+            lines.append(line.replace("dropdown", "admonition"))
+        elif "{margin}" in line:
+            lines.append(line.replace("{margin}", "{admonition} Note"))
+        elif "{tabbed}" in line:
+            lines.append(line.replace("{tabbed}", "{admonition}"))
         else:
-            if "{epigraph}" in line:
-                in_citation = True
-            elif "{dropdown}" in line:
-                lines.append(line.replace("dropdown", "admonition"))
-            elif "{margin}" in line:
-                lines.append(line.replace("{margin}", "{admonition} Note"))
-            elif "{tabbed}" in line:
-                lines.append(line.replace("{tabbed}", "{admonition}"))
-            else:
-                lines.append(line.replace("🌠", "").replace("🌈", ""))
+            lines.append(line.replace("🌠", "").replace("🌈", ""))
     return "\n".join(lines)
 
 
@@ -180,21 +179,20 @@ def clean_output(book):
             lines.append(r"\begin{quotebox}{quote}")
         elif r"\end{quote}" in line:
             lines.append(r"\end{quotebox}")
+        elif in_code:
+            lines.append(
+                line.replace("- -", "--")
+                .replace(" - ", "-")
+                .replace("true -neutral -cookiecutter", "true-neutral-cookiecutter")
+                .replace(" -forge", "-forge")
+                .replace("| --", "|--")
+                .replace("egg -info", "egg-info")
+                .replace("sphinx -quickstart", "sphinx-quickstart")
+                .replace("non -integer", "non-integer")
+                .replace("codebook -testbucket", "codebook-testbucket")
+            )
         else:
-            if in_code:
-                lines.append(
-                    line.replace("- -", "--")
-                    .replace(" - ", "-")
-                    .replace("true -neutral -cookiecutter", "true-neutral-cookiecutter")
-                    .replace(" -forge", "-forge")
-                    .replace("| --", "|--")
-                    .replace("egg -info", "egg-info")
-                    .replace("sphinx -quickstart", "sphinx-quickstart")
-                    .replace("non -integer", "non-integer")
-                    .replace("codebook -testbucket", "codebook-testbucket")
-                )
-            else:
-                lines.append(line.replace("testing.md", "testing"))
+            lines.append(line.replace("testing.md", "testing"))
 
     return "\n".join(lines)
 
